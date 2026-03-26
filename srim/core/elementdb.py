@@ -12,7 +12,9 @@ import srim
 
 def create_elementdb():
     dbpath = os.path.join(srim.__path__[0], 'data', 'elements.yaml')
-    return yaml.load(open(dbpath, "r"))
+    with open(dbpath, "r") as f:
+        db = yaml.safe_load(f)
+    return db
 
 
 class ElementDB(object):
@@ -25,6 +27,9 @@ class ElementDB(object):
         :param str or int identifier: Unique symbol, name, or atomic number of element
         """
         if isinstance(identifier, (bytes, str)):
+            if isinstance(identifier, bytes):
+                identifier = identifier.decode('utf-8')
+
             if re.match("^[A-Z][a-z]?$", identifier):   # Symbol
                 return cls._lookup_symbol(identifier)
             elif re.match("^[A-Z][a-z]*$", identifier): # Name

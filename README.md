@@ -2,7 +2,19 @@
 
 PySrim is a code written in python to simulate via Monte Carlo ion treveling through a target. The ions are stopped through the collisions of ions with the nucleus of an atom within the material and excitation of the electron clouds of each atom.
 
-# About this fork
+# About this fork (By @RibomBalt)
+
+Basically fixed everything I found that doesn't work with new Python 3.11-3.13 or anything that makes me feel uncomfortable. 
+
+Now with modern `pyproject.yaml` one can simply use `uv pip install -e .` to install this package.
+
+A new `SRIM_PATH` environment variable is introduced to specify the SRIM path. You are also prompted to enter it if you didn't set it.
+
+Also I make this work on Windows as well ... no `xvfb` or `wine`, just execute the exe and that's all.
+
+There could be more *inconsistency* until I found them ... If you find any fire an issue and I may have a look (or may not).
+
+# About this fork I'm based on (By Original Author: @victorgarric)
 
 ## Introduction
 

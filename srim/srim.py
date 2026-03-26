@@ -20,8 +20,12 @@ from .core.utils import (
 from .output import Results
 from .input import AutoTRIM, TRIMInput, SRInput
 
+SRIM_DIRECTORY = os.environ.get('SRIM_PATH', os.path.join(os.sep, 'tmp', 'srim'))
+if not os.path.isdir(SRIM_DIRECTORY) or not os.path.isfile(os.path.join(SRIM_DIRECTORY, 'TRIM.exe')):
+    SRIM_DIRECTORY = input("SRIM_PATH environment variable not set or invalid. Please enter path to directory where SRIM is installed: ")
+    if not os.path.isdir(SRIM_DIRECTORY) or not os.path.isfile(os.path.join(SRIM_DIRECTORY, 'TRIM.exe')):
+        raise ValueError('SRIM_PATH must be path to directory where SRIM is installed')
 
-SRIM_DIRECTORY = os.path.join(os.sep, 'tmp', 'srim')
 
 
 class SRIMSettings(object):
@@ -102,14 +106,22 @@ class SRIM(object):
         self._write_input_files()
         # Make sure compatible with Windows, OSX, and Linux
         absolute_path=str(os.path.join('.', 'TRIM.exe'))
-        if subbing==False :
+
+        if os.name == 'nt': # Windows
             os.environ['WINEDEBUG']='-all'
-            subprocess.call(['wine',absolute_path])
+            subprocess.call([absolute_path])
             #os.system('WINEDEBUG=-all wine %s'% str(os.path.join('.', 'TRIM.exe')))
-        if subbing==True :
+
+        elif subbing:
+            # Linux and OSX
             os.environ['WINEDEBUG']='-all'
             subprocess.call(['xvfb-run','-a',absolute_path,'2>/dev/null'])
             #os.system('WINEDEBUG=-all xvfb-run %s'% str(os.path.join('.', 'TRIM.exe')))
+            
+        else:
+            os.environ['WINEDEBUG']='-all'
+            subprocess.call(['wine',absolute_path])
+            #os.system('WINEDEBUG=-all wine %s'% str(os.path.join('.', 'TRIM.exe')))
         os.chdir(current_directory)
 
         return Results(srim_directory)

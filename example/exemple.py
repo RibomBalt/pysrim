@@ -3,7 +3,7 @@
 from srim.core.target import Target
 from srim.core.layer import Layer
 from srim.core.ion import Ion
-from srim.routine import *
+from srim.routine import auto_steps, merge_results
 import os
 ### Param�tres globaux :
     #G�n�raux
@@ -13,16 +13,16 @@ subbing = True #Si True, pas d'affichage obligatoire pour le batch
 angle_ions=15
     #Sur les dossiers d'enregistrement et de SRIM
 save_directory=None #Si None --> dossier de lecture
-SRIM_dir=os.path.expanduser('~/SRIM') #Dossier SRIM
+SRIM_dir=os.environ.get("SRIM_PATH", os.path.expanduser('~/SRIM')) #Dossier SRIM
 
 
-### D�finition des ions
-ions = {'identifier': 'He', 'energy': 1e3} # �nergie en eV
+### Definition des ions
+ions = {'identifier': 'He', 'energy': 1e3} #nergie en eV
 
 step=20000
 steps=[(i,i+step) for i in range(0,100000,step)]
 
-### D�finition des couches
+### Definition des couches
 layer1 = Layer({
     'Zr': {
         'stoich': 0.34, #Stoechiom�trie

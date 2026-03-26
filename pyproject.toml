@@ -1,0 +1,45 @@
+[project]
+name = "pysrim"
+version = "0.2.0"
+requires-python = ">=3.11"
+readme = "README.md"
+dependencies = [
+    "docopt>=0.6.2",
+    "matplotlib>=3.10.8",
+    "mpi4py>=4.1.1",
+    "numpy>=2.4.3",
+    "pandas>=3.0.1",
+    "pyyaml>=6.0.3",
+    "scipy>=1.17.1",
+]
+
+keywords = [
+    "material",
+    "srim",
+    "automation",
+    "plotting",
+    "scientific",
+    "simulation"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13", # 添加对 Python 3.13 的支持
+    "License :: OSI Approved :: MIT License", # 假设是MIT协议
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Development Status :: 4 - Beta", # 或其他状态
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"] # 确保setuptools版本足够新
+build-backend = "setuptools.build_meta"
+
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0", # 将 tests_require 移到这里
+]

@@ -3,6 +3,7 @@
 ### Modified by : Victor Garric : victor.garric@gmail.com, 2018
 
 import os
+import json
 from collections import Counter
 from itertools import count
 from scipy.stats import gaussian_kde
@@ -30,7 +31,9 @@ def run_calculation(ion, target, num_ions, calculation=2, save_directory=None, S
         srim = SRIM(target, ion, number_ions=num_ions, calculation=calculation, collisions=2, random_seed=randint(0, 100000),plot_xmin=plot_limits[0],plot_xmax=plot_limits[1],angle_ions=angle_ions)
     results = srim.run(SRIM_dir,subbing=subbing)
     if save_directory==None :
-        save_directory = os.getcwd()
+        save_directory = os.path.join(os.getcwd(), "output")
+        os.makedirs(save_directory, exist_ok=True)
+        
     local_dir=os.path.join(save_directory,('%s-%s-%s'%(ion.symbol,ion.energy,str(plot_limits[0])+'-'+str(plot_limits[1]))))
     os.makedirs(local_dir, exist_ok=True)
     SRIM.copy_output_files(SRIM_dir, local_dir)
@@ -62,11 +65,17 @@ def auto_angle(ions, target, num_ions, calculation, save_directory, SRIM_dir, su
                         SRIM_dir=SRIM_dir, subbing=subbing, angle_ions=angle_ions)
     print('*** Automated SRIM on Python : End ***')
 
-def merge_results() :
-    dirs=[x[0] for x in os.walk(os.getcwd())]
+def merge_results(result_directory=None) :
+
+    if result_directory is None:
+        result_directory = os.path.join(os.getcwd(), "output")
+
+    dirs=[x[0] for x in os.walk(result_directory)]
     dirs.pop(0)
     for item in dirs :
-        if item.endswith('__pycache__') :
+        # TODO exclude __pycache__ and other non result directories
+        # Use better method to track path of result directories ... maybe with a result.json
+        if item.endswith('__pycache__') or item.endswith(".git"):
             dirs.remove(item)
     
     dirs.sort()
@@ -74,8 +83,8 @@ def merge_results() :
     total_vacancy=''
     
     for directory in dirs :
-        local_range=open(directory+'/RANGE.txt','r').readlines()
-        local_vacancy=open(directory+'/VACANCY.txt','r').readlines()
+        local_range=open(os.path.join(directory,'RANGE.txt'),'r').readlines()
+        local_vacancy=open(os.path.join(directory,'VACANCY.txt'),'r').readlines()
         for line in local_range :
             if line.startswith('-----------  ') :
                 range_start=local_range.index(line)+1
@@ -90,10 +99,10 @@ def merge_results() :
         for i in range(vacancy_start,vacancy_end) :
             total_vacancy+=(local_vacancy[i])
     
-    file_range=open('total_range.txt','w')
+    file_range=open(os.path.join(result_directory,'total_range.txt'),'w')
     file_range.write(total_range)
     file_range.close()
     
-    file_vacancy=open('total_vacancy.txt','w')
+    file_vacancy=open(os.path.join(result_directory,'total_vacancy.txt'),'w')
     file_vacancy.write(total_vacancy)
     file_vacancy.close()

@@ -8,6 +8,16 @@
 
 ### INSTALLATION DE SRIM et PYSRIM
 
+### PYSRIM：SRIM计算的Python封装器
+### 项目发起人：Christopher Ostrouchov
+### 修改者：Victor Garric : victor.garric@cea.fr, 2018
+
+### 此安装需要预先安装wine和xvfb
+### 如果尚未安装，请联系您的管理员执行以下命令：
+### sudo apt-get install wine xvfb
+
+### SRIM和PYSRIM的安装
+
 import os
 origin=os.getcwd()
 
