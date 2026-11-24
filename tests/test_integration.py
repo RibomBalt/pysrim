@@ -68,16 +68,11 @@ def test_full_cascade_damage_profile(results):
 
 
 class TestRoutine:
-    @pytest.mark.xfail(
-        reason="run_calculation() 的默认 plot_limits=None 在 routine.py:37 触发 TypeError",
-        strict=False,
-    )
-    def test_run_calculation_with_default_plot_limits(
-        self, silicon_target, hydrogen_ion, tmp_path, srim_dir
-    ):
+    def test_run_calculation_with_default_plot_limits(self, silicon_target, hydrogen_ion, tmp_path, srim_dir):
+        """plot_limits 默认 None 时应能完成并写入结果目录。"""
         from srim.routine import run_calculation
 
-        run_calculation(
+        local_dir = run_calculation(
             hydrogen_ion,
             silicon_target,
             20,
@@ -85,7 +80,9 @@ class TestRoutine:
             save_directory=str(tmp_path),
             SRIM_dir=str(srim_dir),
         )
-        assert any(tmp_path.iterdir())
+        assert (tmp_path / "H-1000000.0").is_dir()
+        assert (tmp_path / "H-1000000.0" / "RANGE.txt").is_file()
+        assert local_dir == str(tmp_path / "H-1000000.0")
 
     def test_auto_steps_and_merge_results(self, silicon_target, tmp_path, srim_dir):
         """分步计算 + 结果合并：每步都要有 RANGE.txt，合并后要有 total_* 文件。"""

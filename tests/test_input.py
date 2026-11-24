@@ -67,9 +67,10 @@ def test_trim_in_element_and_layer_block(trim_in_text):
     assert element_line.split()[:4] == ["Atom", "1", "=", "Si"]
     assert float(element_line.split()[-1]) == pytest.approx(28.0855, rel=1e-4)
 
-    layer_line = next(line for line in lines if line.startswith('1 "None"'))
-    assert float(layer_line.split()[2]) == pytest.approx(100_000.0)  # 厚度 Ang
-    assert float(layer_line.split()[3]) == pytest.approx(2.32)  # 密度
+    layer_line = next(line for line in lines if line.startswith('1 "'))
+    assert int(layer_line.split()[0]) == 1
+    assert float(layer_line.split()[-3]) == pytest.approx(100_000.0)  # 厚度 Ang
+    assert float(layer_line.split()[-2]) == pytest.approx(2.32)  # 密度
 
 
 def test_trim_in_written_to_cwd_only(trim_in_text, tmp_path):

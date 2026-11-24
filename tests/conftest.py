@@ -1,12 +1,12 @@
-"""pytest 公共夹具。
+"""pytest 公共夹具与可选测试分组。
 
-``import srim`` 会在**导入期**校验 ``SRIM_PATH``（见 ``srim/srim.py``），因此必须在
-任何 srim 导入之前把环境变量设置好。SRIM 安装目录按以下顺序查找：
+SRIM 安装目录按以下顺序查找：
 
 1. 环境变量 ``SRIM_PATH``
 2. ``<repo>/vendor/SRIM``（项目内本地副本，已被 .gitignore 排除）
 
-两者都不可用时不做任何测试收集（整目录跳过），因为导入 srim 本身就会失败。
+单元测试在没有 SRIM 的机器上也能运行（``import srim`` 不再在导入期校验
+``SRIM_PATH``）；只有需要真实 ``TRIM.exe`` 的集成测试会被跳过。
 """
 
 from __future__ import annotations
@@ -35,10 +35,8 @@ def locate_srim_dir() -> Path | None:
 
 SRIM_DIR = locate_srim_dir()
 
-if SRIM_DIR is None:  # pragma: no cover - 取决于本地环境
-    collect_ignore_glob = ["*"]
-else:
-    os.environ["SRIM_PATH"] = str(SRIM_DIR)
+if SRIM_DIR is not None:
+    os.environ.setdefault("SRIM_PATH", str(SRIM_DIR))
 
 
 # --------------------------------------------------------------------------- #
@@ -68,6 +66,8 @@ def pytest_collection_modifyitems(config, items):
 @pytest.fixture(scope="session")
 def srim_dir() -> Path:
     """SRIM 安装目录（含 TRIM.exe）。"""
+    if SRIM_DIR is None:
+        pytest.skip("未找到 SRIM 安装（设置 SRIM_PATH 或放置 vendor/SRIM）")
     return SRIM_DIR
 
 
@@ -93,8 +93,8 @@ def trim_run(srim_dir, tmp_path_factory):
     """真实执行一次 TRIM 计算，会话内复用。
 
     TRIM.exe 必须在 SRIM 安装目录内执行（依赖同目录的 ``Data`` 等伴随文件），
-    因此计算就地写入 ``vendor/SRIM``；断言用的副本通过 ``copy_output_files``
-    收集到临时目录，避免测试依赖上一次的残留文件。
+    因此计算就地写入安装目录；断言用的副本通过 ``copy_output_files`` 收集到
+    临时目录，避免测试依赖上一次的残留文件。
 
     返回 ``(results, output_dir)``。
     """

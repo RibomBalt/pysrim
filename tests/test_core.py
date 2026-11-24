@@ -94,14 +94,18 @@ class TestLayer:
         layer = Layer({"Si": 1.0}, density=2.32, width=10.0, name="Oxyde")
         assert layer.name == "Oxyde"
 
-    @pytest.mark.xfail(
-        reason="Layer.name setter 用 str(value) 把 None 变成字符串 'None'"
-        "（srim/core/layer.py:58）；且 chemical_formula 对 dict 元素值格式化会抛 TypeError",
-        strict=False,
-    )
     def test_default_name_falls_back_to_chemical_formula(self):
         layer = Layer({"Si": 1.0}, density=2.32, width=10.0)
-        assert layer.name == "Si"
+        assert layer.name == "Si 1.00"
+
+    def test_name_is_not_stringified_when_none(self):
+        layer = Layer({"Si": 1.0}, density=2.32, width=10.0)
+        assert layer._name is None
+        assert "None" not in layer.name
+
+    def test_repr_uses_chemical_formula(self):
+        layer = Layer.from_formula("SiO2", density=2.32, width=10.0)
+        assert "Si" in repr(layer) and "O" in repr(layer)
 
 
 class TestTarget:
@@ -133,15 +137,7 @@ class TestIon:
     def test_default_mass_comes_from_database(self):
         assert Ion("H", energy=1.0e6).mass == pytest.approx(1.0079, rel=1e-4)
 
-
-class TestKnownIssues:
-    """记录已确认但尚未修复的缺陷：测试保持 xfail，修复后自动转为 XPASS。"""
-
-    @pytest.mark.xfail(
-        reason="Ion.__init__ 用位置参数调用 Element(identifier, unique_name, mass)，"
-        "mass 关键字被当成 unique_name；srim/core/ion.py:22",
-        strict=False,
-    )
-    def test_ion_accepts_custom_mass(self):
+    def test_custom_mass_is_not_swallowed_by_unique_name(self):
         ion = Ion("H", energy=1.0e6, mass=2.014)
         assert ion.mass == pytest.approx(2.014)
+        assert ion.unique_name == ""
