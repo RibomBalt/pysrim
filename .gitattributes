@@ -1,0 +1,14 @@
+# 统一换行符：仓库与检出统一为 LF，避免 Windows 检出后出现整文件级 CRLF diff
+* text=auto eol=lf
+
+# 二进制资源禁止行尾转换
+*.bin binary
+*.BIN binary
+*.exe binary
+*.dll binary
+*.pdf binary
+*.7z binary
+*.docx binary
+*.png binary
+*.jpg binary
+*.gif binary

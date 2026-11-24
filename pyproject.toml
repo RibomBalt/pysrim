@@ -35,11 +35,35 @@ classifiers = [
 ]
 
 [build-system]
-requires = ["setuptools>=61.0", "wheel"] # 确保setuptools版本足够新
+requires = ["setuptools>=70", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["srim*"]
+exclude = ["vendor*", "tmp*", "tests*", "example*", "output*"]
 
-[project.optional-dependencies]
-test = [
-    "pytest>=6.0", # 将 tests_require 移到这里
+[tool.setuptools.package-data]
+srim = ["data/*.yaml", "data/*.bin", "data/*.BIN"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "srim: 需要可用的 SRIM 安装才能运行（缺少时整体跳过）",
+    "slow: 真实调用 TRIM.exe 的集成测试",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["vendor", "tmp", "output", "example"]
+
+[tool.ruff.lint]
+# 只启用“确定性错误”规则：语法错误与未定义名等，不引入大规模风格改写
+select = ["E4", "E7", "E9", "F"]

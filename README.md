@@ -64,3 +64,30 @@ If your unix version doesn't use python 2 and 3 at the same time, change  `pip3`
 # Known issues and future developments
 
 * Bha ! Displays are mostly in french and so example file is
+
+# Development
+
+## Setup
+
+`SRIM_PATH` must point to a directory containing `TRIM.exe`. `import srim` validates
+it at import time, so it has to be a real SRIM installation (or a copy placed under
+`vendor/SRIM`, which is git-ignored).
+
+```bash
+uv sync            # installs runtime + dev dependencies (pytest, ruff)
+uv run ruff check srim tests
+```
+
+## Tests
+
+The suite is split in two groups:
+
+```bash
+uv run pytest             # unit tests only (data model + TRIM.IN/SR.IN generation), < 2 s
+uv run pytest --srim      # also run the integration tests that execute TRIM.exe
+```
+
+Integration tests are opt-in (`--srim`) because they spawn `TRIM.exe` inside the SRIM
+installation directory: they are slower and they overwrite `TRIM.IN` and the output
+files in that directory. Without a usable SRIM installation the whole `tests/`
+directory is skipped during collection.

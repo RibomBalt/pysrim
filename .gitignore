@@ -68,3 +68,6 @@ venv
 
 output
 .venv
+# Local SRIM installation copy (test fixture, not tracked)
+vendor/
+tmp/
