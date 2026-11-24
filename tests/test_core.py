@@ -141,3 +141,38 @@ class TestIon:
         ion = Ion("H", energy=1.0e6, mass=2.014)
         assert ion.mass == pytest.approx(2.014)
         assert ion.unique_name == ""
+
+
+class TestSRIMSettings:
+    """SRIM.run() 的输入校验（不执行 TRIM）。"""
+
+    def _settings(self, **kwargs):
+        from srim.srim import SRIMSettings
+
+        return SRIMSettings(**kwargs)
+
+    def test_diskfile_flags_are_independent(self):
+        settings = self._settings(ranges=0, sputtered=1, transmit=1, backscattered=1)
+        assert (settings.ranges, settings.sputtered, settings.transmit, settings.backscattered) == (
+            0,
+            1,
+            1,
+            1,
+        )
+
+    def test_plot_range_must_be_ordered(self):
+        with pytest.raises(ValueError):
+            self._settings(plot_xmin=100.0, plot_xmax=10.0)
+
+    @pytest.mark.parametrize("angle", [0, 15.5, 89.9])
+    def test_angle_is_accepted_below_ninety_degrees(self, angle):
+        assert self._settings(angle_ions=angle).angle_ions == pytest.approx(angle)
+
+    @pytest.mark.parametrize("angle", [-1.0, 90.0])
+    def test_angle_outside_range_is_rejected(self, angle):
+        with pytest.raises(ValueError):
+            self._settings(angle_ions=angle)
+
+    def test_description_must_not_contain_quotes(self):
+        with pytest.raises(ValueError):
+            self._settings(description='a "quoted" run')

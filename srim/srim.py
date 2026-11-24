@@ -70,7 +70,7 @@ class SRIMSettings(object):
             "ranges": check_input(int, is_zero_or_one, args.get("ranges", 0)),
             "backscattered": check_input(int, is_zero_or_one, args.get("backscattered", 0)),
             "transmit": check_input(int, is_zero_or_one, args.get("transmit", 0)),
-            "sputtered": check_input(int, is_zero_or_one, args.get("ranges", 0)),
+            "sputtered": check_input(int, is_zero_or_one, args.get("sputtered", 0)),
             "collisions": check_input(int, is_zero_to_two, args.get("collisions", 0)),
             "exyz": check_input(int, is_zero_or_one, args.get("exyz", 0)),
             "angle_ions": check_input(float, is_srim_degrees, args.get("angle_ions", 0.0)),
