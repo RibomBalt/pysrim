@@ -110,3 +110,30 @@ def test_srim_copies_known_output_files(tmp_path, srim_dir):
 
     with pytest.raises(ValueError):
         SRIM.copy_output_files(str(tmp_path / "missing"), str(dest))
+
+
+def test_srim_copies_auxiliary_outputs_from_srim_outputs_dir(tmp_path):
+    """TRIM 把辅助输出写进 'SRIM Outputs' 子目录，包括拼写古怪的 COLLISON.txt。"""
+    src = tmp_path / "src"
+    dest = tmp_path / "dest"
+    (src / "SRIM Outputs").mkdir(parents=True)
+    dest.mkdir()
+    for filename in ("SPUTTER.txt", "TRANSMIT.txt", "BACKSCAT.txt", "COLLISON.txt"):
+        (src / "SRIM Outputs" / filename).write_text("dummy", encoding="utf-8")
+
+    SRIM.copy_output_files(str(src), str(dest))
+
+    for filename in ("SPUTTER.txt", "TRANSMIT.txt", "BACKSCAT.txt", "COLLISON.txt"):
+        assert (dest / filename).is_file(), filename
+
+
+def test_srim_can_skip_the_srim_outputs_dir(tmp_path):
+    src = tmp_path / "src"
+    dest = tmp_path / "dest"
+    (src / "SRIM Outputs").mkdir(parents=True)
+    dest.mkdir()
+    (src / "SRIM Outputs" / "SPUTTER.txt").write_text("dummy", encoding="utf-8")
+
+    SRIM.copy_output_files(str(src), str(dest), check_srim_output=False)
+
+    assert not (dest / "SPUTTER.txt").exists()

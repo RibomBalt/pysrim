@@ -121,6 +121,11 @@ class SRIM(object):
             "RANGE_3D.txt",
             "TRANSMIT.txt",
             "TRIMOUT.txt",
+            # SRIM writes the collision log as COLLISON.txt (single S) inside the
+            # 'SRIM Outputs' sub-directory; accept both spellings.
+            "COLLISON.txt",
+            "COLLISIONS.txt",
+            "EXYZ.txt",
         }
 
         if not os.path.isdir(src_directory):
