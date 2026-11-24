@@ -61,10 +61,7 @@ class SRIM_Output(object):
                     # We know that elements will match
                     layers_elements.append(re.findall(element_regex, layer[5]))
 
-                raise NotImpementedError()
-
-                import pytest
-                pytest.set_trace()
+                raise NotImplementedError('layers parsing is not implemented')
 
         raise SRIMOutputParseError("unable to extract total target from file")
 
@@ -88,8 +85,6 @@ class SRIM_Output(object):
 
         if match:
             # Headers TODO: name the columns in table
-            header = None
-
             # Data
             data = np.genfromtxt(BytesIO(output[match.end():]), max_rows=100)
             return data
@@ -503,7 +498,7 @@ class Collision:
 
             # Handles weird case where no summary of cascade
             if target_disp is None:
-                break;
+                break
 
         # Reads ion footer
         ion_number = re.search(int_regex, next(lines)).group(0)

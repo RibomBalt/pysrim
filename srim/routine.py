@@ -3,34 +3,19 @@
 ### Modified by : Victor Garric : victor.garric@gmail.com, 2018
 
 import os
-import json
-from collections import Counter
-from itertools import count
-from scipy.stats import gaussian_kde
 from random import randint
-from scipy.stats import gaussian_kde
 from .srim import SRIM
-from .core.target import Target
-from .core.layer import Layer
 from .core.ion import Ion
-from .core.element import Element
-from .output import (
-    Results, Phonons, Ioniz, Vacancy, 
-    NoVacancy, EnergyToRecoils, Range,
-    Collision
-)
-from pathlib import Path
 import datetime
-import sys
 
 def run_calculation(ion, target, num_ions, calculation=2, save_directory=None, SRIM_dir='~/SRIM', subbing=False, plot_limits=None, angle_ions=0):
     print('\t%s\t%s\t%s\t\t%d\t\t%s\t\t%s' % (datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'), ion.symbol, ion.energy,num_ions,plot_limits,angle_ions))
-    if plot_limits==None :
+    if plot_limits is None :
         srim = SRIM(target, ion, number_ions=num_ions, calculation=calculation, collisions=2, random_seed=randint(0, 100000),angle_ions=angle_ions)
     else :
         srim = SRIM(target, ion, number_ions=num_ions, calculation=calculation, collisions=2, random_seed=randint(0, 100000),plot_xmin=plot_limits[0],plot_xmax=plot_limits[1],angle_ions=angle_ions)
-    results = srim.run(SRIM_dir,subbing=subbing)
-    if save_directory==None :
+    srim.run(SRIM_dir,subbing=subbing)
+    if save_directory is None :
         save_directory = os.path.join(os.getcwd(), "output")
         os.makedirs(save_directory, exist_ok=True)
         

@@ -20,7 +20,7 @@ class Element(object):
         self._symbol = element['symbol']
         self._name = element['name']
         self._atomic_number = element['z']
-        if unique_name==None :
+        if unique_name is None :
             self.unique_name=''
         else :
             self.unique_name=unique_name

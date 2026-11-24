@@ -11,7 +11,7 @@ import shutil
 
 from .core.utils import (
     check_input,
-    is_zero, is_zero_or_one, is_zero_to_two, is_zero_to_five, is_one_to_seven, is_one_to_eight,
+    is_zero_or_one, is_zero_to_two, is_zero_to_five, is_one_to_seven, is_one_to_eight,
     is_srim_degrees,
     is_positive,
     is_quoteless
@@ -152,17 +152,17 @@ class SR(object):
         """ Write necissary SR input file for calculation """
         SRInput(self).write()
 
-    def run(self, srim_directory=SRIM_DIRECTORY):
+    def run(self, srim_directory=SRIM_DIRECTORY, subbing=False):
         current_directory = os.getcwd()
         os.chdir(os.path.join(srim_directory, 'SR Module'))
         self._write_input_file()
         # Make sure compatible with Windows, OSX, and Linux
         absolute_path=str(os.path.join('.', 'SRModule.exe'))
-        if subbing==False :
+        if not subbing :
             os.environ['WINEDEBUG']='-all'
             subprocess.call(['wine',absolute_path])
             #os.system('WINEDEBUG=-all wine %s'% str(os.path.join('.', 'SRModule.exe')))
-        if subbing==True :
+        if subbing :
             os.environ['WINEDEBUG']='-all'
             subprocess.call(['xvfb-run','-a',absolute_path,'2>/dev/null'])
             #os.system('WINEDEBUG=-all xvfb-run %s'% str(os.path.join('.', 'SRModule.exe')))

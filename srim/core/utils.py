@@ -12,13 +12,41 @@ def check_input(input_type, condition, value):
         raise ValueError('type of argument does not satisfy condition')
     return value
 
-is_zero = lambda value: True if value == 0 else False
-is_zero_or_one = lambda value: True if value in range(2) else False
-is_zero_to_two = lambda value: True if value in range(3) else False
-is_zero_to_five = lambda value: True if value in range(6) else False
-is_one_to_seven = lambda value: True if value in range(1,8) else False
-is_one_to_eight = lambda value: True if value in range(1,9) else False
-is_srim_degrees = lambda value: True if 0.0 <= value < 90.0 else False 
-is_positive = lambda value: True if value >= 0.0 else False
-is_greater_than_zero = lambda value: True if value > 0.0 else False
-is_quoteless = lambda value: True if '"' not in value else False
+def is_zero(value):
+    return value == 0
+
+
+def is_zero_or_one(value):
+    return value in range(2)
+
+
+def is_zero_to_two(value):
+    return value in range(3)
+
+
+def is_zero_to_five(value):
+    return value in range(6)
+
+
+def is_one_to_seven(value):
+    return value in range(1, 8)
+
+
+def is_one_to_eight(value):
+    return value in range(1, 9)
+
+
+def is_srim_degrees(value):
+    return 0.0 <= value < 90.0
+
+
+def is_positive(value):
+    return value >= 0.0
+
+
+def is_greater_than_zero(value):
+    return value > 0.0
+
+
+def is_quoteless(value):
+    return '"' not in value
