@@ -48,18 +48,18 @@ Added from usual pysrim and largely inspired example files from the original aut
 * pandas
 * mpi4py
 
-## Installation (1/2) : Unix requirements
+## Installation
 
-If you don't have `wine` and `xvfb` installed use :
+Install SRIM from <http://www.srim.org> (Windows) or run it through `wine`/`xvfb` on
+Unix, then point `SRIM_PATH` at the installation directory and install the package:
 
-<pre> sudo apt-get install wine xvfb </pre>
+<pre>
+export SRIM_PATH=/path/to/SRIM   # directory containing TRIM.exe
+uv pip install -e .
+</pre>
 
-## Installation (2/2) : Set up and install everything
-
-All the other requirements are included in the `install_pysrim.py` file. Simply run :
-<pre>python3 install_pysrim.py</pre>
-Sorry the display is in french ! Will fix that soon !
-If your unix version doesn't use python 2 and 3 at the same time, change  `pip3` for `pip` in the installation file.
+The legacy `install_pysrim.py` downloader has been removed: SRIM is no longer
+available from the URL it used.
 
 # Known issues and future developments
 
@@ -69,9 +69,10 @@ If your unix version doesn't use python 2 and 3 at the same time, change  `pip3`
 
 ## Setup
 
-`SRIM_PATH` must point to a directory containing `TRIM.exe`. `import srim` validates
-it at import time, so it has to be a real SRIM installation (or a copy placed under
-`vendor/SRIM`, which is git-ignored).
+`SRIM_PATH` must point to a directory containing `TRIM.exe`. It is validated when a
+calculation runs, not at import time, so `import srim` works without SRIM; a copy of
+the installation can also be placed under `vendor/SRIM` (git-ignored) and picked up
+automatically by the test suite.
 
 ```bash
 uv sync            # installs runtime + dev dependencies (pytest, ruff)

@@ -43,7 +43,7 @@ include = ["srim*"]
 exclude = ["vendor*", "tmp*", "tests*", "example*", "output*"]
 
 [tool.setuptools.package-data]
-srim = ["data/*.yaml", "data/*.bin", "data/*.BIN"]
+srim = ["data/*.yaml"]
 
 [dependency-groups]
 dev = [
@@ -62,7 +62,7 @@ markers = [
 [tool.ruff]
 line-length = 120
 target-version = "py311"
-extend-exclude = ["vendor", "tmp", "output", "example"]
+extend-exclude = ["vendor", "tmp", "output"]
 
 [tool.ruff.lint]
 # 只启用“确定性错误”规则：语法错误与未定义名等，不引入大规模风格改写
