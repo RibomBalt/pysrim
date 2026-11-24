@@ -5,15 +5,13 @@
 
 import re
 
-from .utils import (
-    check_input, 
-    is_positive, is_greater_than_zero,
-    is_zero_or_one
-)
+from .utils import check_input, is_positive, is_greater_than_zero, is_zero_or_one
 from .element import Element
 
+
 class Material(object):
-    """ Material Representation """
+    """Material Representation"""
+
     def __init__(self, elements, density, phase=0):
         """Create Material from elements, density, and phase
 
@@ -28,7 +26,7 @@ class Material(object):
         - surface (optional): Surface binding energies [eV] default 3.0 eV
 
         dictionary element properties can be:
-        
+
         float or int: stoich
           all others take default values for now
 
@@ -39,7 +37,7 @@ class Material(object):
         elements list structure:
           [stoich, E_d, lattice, surface]
           first element is required all others optional
-          
+
         For example a single element in elements can be specified as:
           - {'Cu': 1.0}
           - {Element('Cu'): 1.0}
@@ -60,50 +58,56 @@ class Material(object):
             values = elements[element]
 
             if isinstance(values, dict):
-                stoich = values['stoich']
-                e_disp = values.get('E_d', 25.0)
-                lattice = values.get('lattice', 0.0)
-                surface = values.get('surface', 3.0)
-                unique_name = values.get('unique_name','default')
+                stoich = values["stoich"]
+                e_disp = values.get("E_d", 25.0)
+                lattice = values.get("lattice", 0.0)
+                surface = values.get("surface", 3.0)
+                unique_name = values.get("unique_name", "default")
             elif isinstance(values, list):
-                default_values = [0.0, 25.0, 0.0, 3.0,'default']
+                default_values = [0.0, 25.0, 0.0, 3.0, "default"]
                 if len(values) == 0 or len(values) > 4:
-                    raise ValueError('list must be 0 < length < 5')
-                values = values + default_values[len(values):]
+                    raise ValueError("list must be 0 < length < 5")
+                values = values + default_values[len(values) :]
                 stoich, e_disp, lattice, surface = values
             elif isinstance(values, (int, float)):
                 stoich = values
                 e_disp = 25.0
                 lattice = 0.0
                 surface = 3.0
-                unique_name='default'
+                unique_name = "default"
             else:
-                raise ValueError('elements must be of type int, float, list, or dict')
+                raise ValueError("elements must be of type int, float, list, or dict")
 
             # Check input
             stoich = check_input(float, is_greater_than_zero, stoich)
             e_disp = check_input(float, is_positive, e_disp)
             lattice = check_input(float, is_positive, lattice)
             surface = check_input(float, is_positive, surface)
-            
+
             stoich_sum += stoich
 
             if not isinstance(element, Element):
                 element = Element(element)
-            
-            self.elements.update({element: {
-                'stoich': stoich, 'E_d': e_disp,
-                'lattice': lattice, 'surface': surface, 'unique_name': unique_name
-            }})
+
+            self.elements.update(
+                {
+                    element: {
+                        "stoich": stoich,
+                        "E_d": e_disp,
+                        "lattice": lattice,
+                        "surface": surface,
+                        "unique_name": unique_name,
+                    }
+                }
+            )
 
         # Normalize the Chemical Composisiton to 1.0
         for element in self.elements:
-            self.elements[element]['stoich'] /= stoich_sum
-
+            self.elements[element]["stoich"] /= stoich_sum
 
     @classmethod
     def from_formula(cls, chemical_formula, density, phase=0):
-        """ Creation Material from chemical formula string and density
+        """Creation Material from chemical formula string and density
         :params str chemical_formula: Chemical formula string in specific format
         :params float density: Density [g/cm^3] of material
         :params int phase: Phase of material (solid = 0, gas = 1)
@@ -113,37 +117,37 @@ class Material(object):
          - AuFe1.5
          - Al10.0Fe90.0
 
-        Chemical Formula will be normalized to 1.0. E_d, 
+        Chemical Formula will be normalized to 1.0. E_d,
         """
         elements = cls._formula_to_elements(chemical_formula)
         return Material(elements, density, phase)
 
     @staticmethod
     def _formula_to_elements(chemical_formula):
-        """ Convert chemical formula to elements """
-        single_element = '([A-Z][a-z]?)([0-9]*(?:\.[0-9]*)?)?'
+        """Convert chemical formula to elements"""
+        single_element = r"([A-Z][a-z]?)([0-9]*(?:\.[0-9]*)?)?"
         elements = {}
-        
-        if re.match('^(?:{})+$'.format(single_element), chemical_formula):
+
+        if re.match("^(?:{})+$".format(single_element), chemical_formula):
             matches = re.findall(single_element, chemical_formula)
         else:
-            error_str = 'chemical formula string {} does not match regex'
+            error_str = "chemical formula string {} does not match regex"
             raise ValueError(error_str.format(chemical_formula))
-        
+
         # Check for errors in stoichiometry
         for symbol, fraction in matches:
             element = Element(symbol)
-        
+
             if element in elements:
-                error_str = 'cannot have duplicate elements {} in stoichiometry'
+                error_str = "cannot have duplicate elements {} in stoichiometry"
                 raise ValueError(error_str.format(element.symbol))
-            
-            if fraction == '':
+
+            if fraction == "":
                 fraction = 1.0
-            
+
             elements.update({element: float(fraction)})
         return elements
-        
+
     @property
     def density(self):
         return self._density
@@ -159,10 +163,12 @@ class Material(object):
     @phase.setter
     def phase(self, value):
         self._phase = check_input(int, is_zero_or_one, value)
-            
+
     @property
     def chemical_formula(self):
-        return ' '.join('{} {:1.2f}'.format(element.symbol, self.elements[element]) for element in self.elements)
+        return " ".join(
+            "{} {:1.2f}".format(element.symbol, self.elements[element]["stoich"]) for element in self.elements
+        )
 
     def __repr__(self):
         material_str = "<Material formula:{} density:{:2.3f}>"
@@ -171,7 +177,7 @@ class Material(object):
     def __eq__(self, material):
         if abs(self.density - material.density) > 1e-6:
             return False
-        
+
         if len(self.elements) != len(material.elements):
             return False
 

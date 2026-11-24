@@ -2,18 +2,14 @@
 ### Project initiated by : Christopher Ostrouchov
 ### Modified by : Victor Garric : victor.garric@gmail.com, 2018
 
-""" Utility functions
+"""Utility functions"""
 
-"""
 
 def check_input(input_type, condition, value):
     value = input_type(value)
     if not condition(value):
-        raise ValueError('type of argument does not satisfy condition')
+        raise ValueError("type of argument does not satisfy condition")
     return value
-
-def is_zero(value):
-    return value == 0
 
 
 def is_zero_or_one(value):
