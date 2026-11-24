@@ -90,5 +90,12 @@ uv run pytest --srim      # also run the integration tests that execute TRIM.exe
 
 Integration tests are opt-in (`--srim`) because they spawn `TRIM.exe` inside the SRIM
 installation directory: they are slower and they overwrite `TRIM.IN` and the output
-files in that directory. Without a usable SRIM installation the whole `tests/`
-directory is skipped during collection.
+files in that directory. The unit tests do not need SRIM at all; only the `--srim`
+group does, and it is skipped with a clear message when no installation is found.
+
+## Usage
+
+See [`docs/usage.md`](docs/usage.md) for a working guide: environment setup, the three
+API levels (`SRIM` / `routine` helpers / a custom scan loop), result fields and units,
+all settings, and the behaviour worth knowing before trusting a run (100 bins, output
+file locations, when `RANGE.txt` reports an empty ion distribution, performance).
